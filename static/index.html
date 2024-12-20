@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stripe Checkout Demo</title>
+  <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+  <h1>Stripe Checkout Demo</h1>
+  <button id="checkout-button">Pay $20.00</button>
+
+  <script>
+    const stripe = Stripe("pk_test_51QVlIMJBz4FlCcy5nqlzYXNmgMmMLtzFcPPt8KrtPGF8vOUjVZdduAcu30xxzX3BtdvemUXgTM4Pj1tvN5VFR2XW00MetKX9xL"); // Thay bằng Publishable Key của bạn
+
+    document.getElementById("checkout-button").addEventListener("click", async () => {
+      // Gửi yêu cầu tạo session tới backend
+      const response = await fetch("/create-checkout-session", {
+        method: "POST",
+      });
+
+      const { id: sessionId } = await response.json();
+
+      // Redirect tới Stripe Checkout
+      const { error } = await stripe.redirectToCheckout({ sessionId });
+
+      if (error) {
+        console.error("Error redirecting to Checkout:", error);
+      }
+    });
+  </script>
+</body>
+</html>
