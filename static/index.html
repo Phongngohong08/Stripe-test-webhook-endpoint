@@ -8,15 +8,27 @@
 </head>
 <body>
   <h1>Stripe Checkout Demo</h1>
-  <button id="checkout-button">Pay $20.00</button>
+  <p>Select a product to purchase:</p>
+  <select id="product-select">
+    <option value="1">Test Product 1 - $20.00</option>
+    <option value="2">Test Product 2 - $50.00</option>
+    <option value="3">Test Product 3 - $100.00</option>
+  </select>
+  <button id="checkout-button">Proceed to Checkout</button>
 
   <script>
-    const stripe = Stripe("pk_test_51QVlIMJBz4FlCcy5nqlzYXNmgMmMLtzFcPPt8KrtPGF8vOUjVZdduAcu30xxzX3BtdvemUXgTM4Pj1tvN5VFR2XW00MetKX9xL"); // Thay bằng Publishable Key của bạn
+    const stripe = Stripe("pk_test_51QVlIMJBz4FlCcy5nqlzYXNmgMmMLtzFcPPt8KrtPGF8vOUjVZdduAcu30xxzX3BtdvemUXgTM4Pj1tvN5VFR2XW00MetKX9xL");
 
     document.getElementById("checkout-button").addEventListener("click", async () => {
+      const productId = document.getElementById("product-select").value;
+
       // Gửi yêu cầu tạo session tới backend
       const response = await fetch("/create-checkout-session", {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ product_id: parseInt(productId) }),
       });
 
       const { id: sessionId } = await response.json();
